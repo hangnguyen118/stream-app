@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { HomeStackScreenProps } from '../navigation/types';
 import Video from 'react-native-video';
-
+import config from '../apiconfig';
 const WatchVideo = ({navigation, route}: HomeStackScreenProps<'WatchVideo'>) => {
   const videoRef = useRef(null);
   useEffect(() => {
@@ -10,7 +10,7 @@ const WatchVideo = ({navigation, route}: HomeStackScreenProps<'WatchVideo'>) => 
 
   return (
     <View>
-    <Video source={{uri: `http://192.168.1.76:8080/api/videos/watch?sourceuri=${route.params.sourceUri}`}} 
+    <Video source={{uri: `${config.API_URL}/api/videos/watch?sourceuri=${route.params.sourceUri}`}} 
       resizeMode='contain'
       style={styles.video}
       controls={true}

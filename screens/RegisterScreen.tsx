@@ -1,10 +1,9 @@
-import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { SquareButton, Logo } from '../components';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../AuthContext';
 import { RootStackScreenProps } from '../navigation/types';
-import { arrowRightSolid } from '../assets';
 import config from '../apiconfig';
 
 const RegisterScreen = ({navigation, route}: RootStackScreenProps<'Register'>) => {
@@ -43,7 +42,7 @@ const RegisterScreen = ({navigation, route}: RootStackScreenProps<'Register'>) =
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.container}>
       <Logo/>  
       
       <TextInput placeholder={'Name'} value={username} onChangeText={(text) => setUsername(text)} style={styles.textInput}></TextInput> 
@@ -51,15 +50,14 @@ const RegisterScreen = ({navigation, route}: RootStackScreenProps<'Register'>) =
       <TextInput placeholder={'Password'} value={password} onChangeText={(text) => setPassword(text)} style={styles.textInput}></TextInput> 
       
       <TextInput placeholder={'phone'} value={phone} onChangeText={(text) => setPhone(text)} style={styles.textInput}></TextInput> 
-      <SquareButton title=" Continue " handleButtonPress={handleButtonPressRegister} iconRight={<Image source={arrowRightSolid}/>} />
+      <SquareButton title=" Continue " handleButtonPress={handleButtonPressRegister}/>
       <View style={{flexDirection:'row', justifyContent:'center', marginBottom: 16}}>
       <Text>______________________ or ______________________</Text>
       </View>
       <TouchableOpacity style={styles.linkButton} onPress={()=> navigation.navigate('Login')}>
         <Text style={styles.link}>Already have an account? Login now</Text>
       </TouchableOpacity>
-      {/* <LinkButton onPress={() => navigation.navigate('Login')} title="Already have an account? Login here"></LinkButton>           */}
-    </SafeAreaView>
+    </ScrollView>
   )
 }
 

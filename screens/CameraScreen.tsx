@@ -4,6 +4,9 @@ import { useEffect, useRef, useState } from 'react'
 import { NoCameraDeviceError } from '../components'
 import { CameraRoll } from '@react-native-camera-roll/camera-roll'
 import { flip, photoCamera, picture } from '../assets'
+import { useIsFocused } from '@react-navigation/native';
+import { AppState } from 'react-native';
+
 const CameraScreen = () => {
   const { hasPermission, requestPermission } = useCameraPermission();
   const [cameraDevice, setCameraDevice] = useState<'back' | 'front'>('back');
@@ -13,6 +16,9 @@ const CameraScreen = () => {
   ])
   const cameraRef = useRef<Camera|null>(null);
   const [photo, setPhoto] = useState('');
+  const isFocused = useIsFocused()
+  const appState = AppState.currentState;
+  const isActive = isFocused && appState === "active"
   
   useEffect(()=>{
 
@@ -35,7 +41,7 @@ const flipCamera = () => {
 };
   return (
       <View>
-        <Camera style={styles.camera} ref={cameraRef} device={device} photo={true} isActive={true} format={format}/>    
+        <Camera style={styles.camera} ref={cameraRef} device={device} photo={true} isActive={false} format={format}/>    
         <View style={styles.bottomContainer}>
           <TouchableOpacity style={styles.iconButton}>
             <Image source={picture} style={styles.iconButton}/>

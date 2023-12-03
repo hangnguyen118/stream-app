@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useState, useReducer, createContext, useContext } from 'react';
 import { SquareButton, Logo } from '../components';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -36,7 +36,7 @@ const LoginScreen = ({ navigation, route }: RootStackScreenProps<'Login'>) => {
       }
     }
     return (
-      <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.container}>
         <Logo/>
         <TextInput placeholder={'Username or Email'} placeholderTextColor={'#c5c5d2'} value={email} onChangeText={(text) => setEmail(text)} style={styles.textInput}></TextInput> 
         <TextInput placeholder={'Password'} placeholderTextColor={'#c5c5d2'} value={password} onChangeText={(text) => setPassword(text)} style={styles.textInput}></TextInput>   
@@ -44,14 +44,15 @@ const LoginScreen = ({ navigation, route }: RootStackScreenProps<'Login'>) => {
         <TouchableOpacity><Text>Forgot your password?</Text></TouchableOpacity>
         
         <View style={{flexDirection:'row', justifyContent:'center', marginBottom: 16}}>
-          <Text>______________________ or ______________________</Text>
+          <Text>_____________ or _____________</Text>
         </View>
   
         <SquareButton title=" Login with Google " color="#F2F3F5" textColor="black" iconRight={<Image source={facebookIcon} style={styles.icon}/>} borderWidth={1}/>
         <SquareButton title=" Login with Facebook " color="#F2F3F5" textColor="black" iconRight={<Image source={googleIcon} style={styles.icon}/>} borderWidth={1} />
         <View style={{marginTop: 56}}></View>
         <TouchableOpacity style={styles.linkButton} onPress={()=> navigation.navigate('Register')}><Text style={styles.link}>Don't have an account? Register now</Text></TouchableOpacity>
-      </SafeAreaView>
+        <TouchableOpacity style={styles.linkButton} onPress={()=> navigation.navigate('Live')}><Text style={styles.link}>start live</Text></TouchableOpacity>
+      </ScrollView>
     )
   }
   

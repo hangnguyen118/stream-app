@@ -6,6 +6,7 @@ export type RootStackParamList = {
     MainTab: NavigatorScreenParams<MainTabParamList>;
     Login: undefined;
     Register: undefined;
+    Live: undefined;
   };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> = 
@@ -16,6 +17,7 @@ export type MainTabParamList = {
     Camera: undefined;
     Profile: undefined;
     Chat: undefined;
+    Live: undefined;
     
 }
 
