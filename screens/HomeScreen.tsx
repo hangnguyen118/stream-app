@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { HomeStackScreenProps, VideoItemProps } from '../navigation/types';
 import config from '../apiconfig';
 import { VideoItem } from '../components';
-import { fireIcon } from '../assets';
+import { fireIcon, logoCamera, liveIcon } from '../assets';
 
 const HomeScreen = ({navigation, route}: HomeStackScreenProps<'Home'>) => {
   const [videos, setVideos] = useState<VideoItemProps[]>([]);
@@ -24,8 +24,12 @@ const handleOpenVideo = ({sourceUri, title, authorName, views, likes}: VideoItem
 };
   return (
     <SafeAreaView>
+        <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.navigate('Camera')}><Image source={logoCamera} style={styles.cameraIcon}/></TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Live')}><Image source={liveIcon} style={styles.cameraIcon}/></TouchableOpacity>
+        </View>
         <View>
-          <Text style={styles.title}>Hot Today<Image source={fireIcon} style={styles.icon}/></Text>
+        <Text style={styles.title}>Hot Today<Image source={fireIcon} style={styles.icon}/></Text>          
           {
             videos!=null && <FlatList data={videos}
             renderItem={({item}) => <VideoItem title={item.title} 
@@ -45,6 +49,11 @@ const handleOpenVideo = ({sourceUri, title, authorName, views, likes}: VideoItem
 export default HomeScreen;
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    padding: 5,
+    justifyContent: 'space-between'
+  },
   container: {    
     backgroundColor: 'white'
   },
@@ -52,7 +61,7 @@ const styles = StyleSheet.create({
       flex: 1,
   },
   title: {
-    fontSize:26
+    fontSize:20
   },
   videoPreview: {
   },
@@ -60,4 +69,8 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28
   },
+  cameraIcon: {
+    width: 50,
+    height: 50,
+  }
 })

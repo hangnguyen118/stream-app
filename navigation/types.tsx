@@ -4,9 +4,11 @@ import type { NavigatorScreenParams, CompositeScreenProps } from '@react-navigat
 
 export type RootStackParamList = {
     MainTab: NavigatorScreenParams<MainTabParamList>;
+    Camera: undefined;
+    Live: undefined;
     Login: undefined;
     Register: undefined;
-    Live: undefined;
+    
   };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> = 
@@ -14,14 +16,11 @@ export type RootStackScreenProps<T extends keyof RootStackParamList> =
 
 export type MainTabParamList = {
     HomeStack: NavigatorScreenParams<HomeStackParamList>;
-    Camera: undefined;
     Profile: undefined;
-    Chat: undefined;
-    Live: undefined;
-    
+    Chat: undefined;   
 }
 
-export type MainTabScreemProps<T extends keyof MainTabParamList> =
+export type MainTabScreenProps<T extends keyof MainTabParamList> =
     CompositeScreenProps<
         BottomTabScreenProps<MainTabParamList, T>,
         RootStackScreenProps<keyof RootStackParamList>
@@ -40,9 +39,14 @@ export type HomeStackParamList = {
   WatchLive: undefined;
 }
 
-export type HomeStackScreenProps<T extends keyof HomeStackParamList> = 
-    NativeStackScreenProps<HomeStackParamList, T>;
+// export type HomeStackScreenProps<T extends keyof HomeStackParamList> = 
+//     NativeStackScreenProps<HomeStackParamList, T>;
 
+export type HomeStackScreenProps<T extends keyof HomeStackParamList> = 
+  CompositeScreenProps<
+    NativeStackScreenProps<HomeStackParamList, T>,
+    RootStackScreenProps<keyof RootStackParamList>
+  >
 
 declare global {
     namespace ReactNavigation {

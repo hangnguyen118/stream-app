@@ -1,72 +1,159 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
-import { Camera, useCameraDevices, useCameraDevice, useCameraPermission, useCameraFormat } from 'react-native-vision-camera'
-import { useEffect, useRef, useState } from 'react'
-import { NoCameraDeviceError } from '../components'
-import { CameraRoll } from '@react-native-camera-roll/camera-roll'
-import { flip, photoCamera, picture } from '../assets'
+import { View, Text, StyleSheet, AppState, Image, TouchableOpacity } from 'react-native'
+import { useState, useRef, useEffect} from 'react'
+import { Camera, useCameraDevice, useCameraPermission, VideoFile } from 'react-native-vision-camera';
 import { useIsFocused } from '@react-navigation/native';
-import { AppState } from 'react-native';
+import { flip, cameraIcon, closeIcon, recordIcon, recordButton, stopButton, logoCamera, liveIcon} from '../assets'
+import { RootStackScreenProps } from '../navigation/types';
 
-const CameraScreen = () => {
+const CameraScreen = ({ navigation, route }: RootStackScreenProps<'Camera'>) => {  
+
   const { hasPermission, requestPermission } = useCameraPermission();
-  const [cameraDevice, setCameraDevice] = useState<'back' | 'front'>('back');
-  const device = useCameraDevice(cameraDevice);
-  const format = useCameraFormat(device, [
-    { fps: 30 },
-  ])
-  const cameraRef = useRef<Camera|null>(null);
-  const [photo, setPhoto] = useState('');
-  const isFocused = useIsFocused()
-  const appState = AppState.currentState;
-  const isActive = isFocused && appState === "active"
+  let cameraRef = useRef<Camera | null>(null)
+
+  const [isActive, setIsActive] = useState(true);
+
+  useEffect(() => {
+    console.log('camera start');    
+    return () => {       
+      setIsActive(false);
+      console.log('camers close');
+    };
+  }, []);
+
+  const [cameraPosition, setCameraPosition] = useState<'back' | 'front'>('front');
+  let device = useCameraDevice(cameraPosition, {});
+
+  const [image, setImage] = useState<string>();
+  const [video, setVideo] = useState<VideoFile>();
   
-  useEffect(()=>{
+  const [mode, setMode] = useState<'record' | 'photo' | 'live'>('photo');
+  const [onRecord, setOnRecord] = useState(false);
 
-  },[])
-  if (!hasPermission) {
-    requestPermission();
+  const [timer, setTimer] = useState(0);
+  let intervalRef = useRef<NodeJS.Timeout>();
+
+  const formatTime = () => {
+  const hours = Math.floor(timer / 3600);
+  const minutes = Math.floor((timer % 3600) / 60);
+  const remainingSeconds = timer % 60;
+    return `${hours} : ${minutes} : ${remainingSeconds}`
   }
 
-  if (device == null) return <NoCameraDeviceError/>
-
-  const takePhoto = async () => {
-    console.log("TAKE IMAGE")
-    if(cameraRef.current){
-      const photo = await cameraRef.current.takePhoto();            
-      setPhoto(`file://${photo.path}`)    
+  if(!hasPermission){
+    requestPermission();  
   }
-}
-const flipCamera = () => {
-  setCameraDevice((prevDevice) => (prevDevice === 'back' ? 'front' : 'back'));
+  
+  const takePicture = async () =>{
+    const photo = await cameraRef.current?.takePhoto();
+    console.log(photo?.path)
+    if(photo){
+      setImage('file://'+ photo.path);
+    }
+  }
+
+  const flipCamera = () => {
+    setCameraPosition((prevDevice) => (prevDevice === 'back' ? 'front' : 'back'));
+  };
+
+  // const frameProcessor = useFrameProcessor((frame) => {
+  //   'worklet'
+  //   console.log(`${frame.timestamp}: ${frame.width}x${frame.height} ${frame.pixelFormat} Frame (${frame.orientation})`)
+  // }, [])
+
+  const stopCamera = async () => {
+    await setCameraPosition('front');
+    navigation.goBack();
+  }
+  const [modeIcon, setModeIcon] = useState(logoCamera);
+
+  const changeMode = () => {
+  setMode((currentMode) => {
+    if (currentMode === 'photo') {
+      setModeIcon(recordIcon);
+      return 'record';
+    } else if (currentMode === 'record') {
+      setModeIcon(liveIcon);
+      return 'live';
+    } else {
+      setModeIcon(logoCamera);
+      return 'photo';
+    }
+  });
 };
+
+  const startRecord = async () => {
+    setOnRecord(true);    
+    intervalRef.current = setInterval(() => {
+          setTimer((timer) => timer + 1);
+        }, 1000);
+
+    if(cameraRef.current){
+      cameraRef.current.startRecording({
+        onRecordingFinished: (video) => setVideo(video),
+        onRecordingError: (error) => console.error(error)
+      })
+    }
+  }
+
+  const stopRecord = () => {
+    setOnRecord(false);
+    clearInterval(intervalRef.current);
+    setTimer(0);
+
+    cameraRef.current?.stopRecording();
+    console.log(video?.path)
+  } 
+
+  if(!device){
+    console.log("No camera device");
+    return <View></View>
+  }
   return (
-      <View>
-        <Camera style={styles.camera} ref={cameraRef} device={device} photo={true} isActive={false} format={format}/>    
-        <View style={styles.bottomContainer}>
-          <TouchableOpacity style={styles.iconButton}>
-            <Image source={picture} style={styles.iconButton}/>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={takePhoto} style={styles.iconButton}>
-            <Image source={photoCamera} style={styles.iconButton}/>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={flipCamera} style={styles.iconButton}>
-            <Image source={flip} style={styles.iconButton}/>
-          </TouchableOpacity>
-          
-        </View>
-      </View>
+    <>
+    {/* {video && <Video style={{width: 200, height: 200, zIndex: 10}} source={{uri: `file://${video.path}`}}></Video>} */}
+      <Camera
+      style={StyleSheet.absoluteFill}
+      ref={cameraRef}
+      device={device}
+      isActive={isActive}
+      photo={true}
+      video={true}
+      //audio={true}
+    />
+      <View style={styles.topHeader}>        
+        <TouchableOpacity onPress={stopCamera}><Image style={{width: 24, height: 24}} source={closeIcon}/></TouchableOpacity>
+        {onRecord && <Text style={{color: 'white'}}>{formatTime()}</Text>}
+        <TouchableOpacity onPress={changeMode}><Image style={{width: 40, height: 40}} source={modeIcon}/></TouchableOpacity>
+      </View>      
+      <View style={styles.bottomContainer}>
+            {image? <Image style={styles.image} source={{uri: image}}/> : <View style={styles.image} />}
+            { mode ==='photo' ? 
+              <TouchableOpacity onPress={takePicture} style={styles.iconButton}>
+              <Image source={cameraIcon} style={styles.iconButton}/>
+            </TouchableOpacity> :
+              <>
+                {
+                onRecord ? 
+                <TouchableOpacity onPress={stopRecord} style={styles.iconButton}>
+                    <Image source={stopButton} style={styles.iconButton}/>
+                </TouchableOpacity> : 
+                <TouchableOpacity onPress={startRecord} style={styles.iconButton}>
+                    <Image source={recordButton} style={styles.iconButton}/>
+                </TouchableOpacity>
+                }
+              </>
+            }                                   
+            <TouchableOpacity onPress={flipCamera} style={styles.iconButton}>
+              <Image source={flip} style={styles.iconButton}/>
+            </TouchableOpacity>
+        </View>          
+    </>    
   )
 }
 
 export default CameraScreen;
 
 const styles = StyleSheet.create({
-  camera: {
-    width: 'auto',
-    height:'100%'
-  },
   text: {
     color: 'black',
     backgroundColor: 'white',
@@ -84,5 +171,26 @@ const styles = StyleSheet.create({
   iconButton:{
     width: 40,
     height: 40,
+  },
+  timeLive: {
+    color: 'white',
+    fontSize: 14
+  },
+  image: {
+    width: 40,
+    height: 40,
+    borderRadius: 25,
+  },
+  error: {
+    color: 'white',
+    fontSize: 20
+  }, 
+  topHeader: {
+    width: 'auto',
+    height: 50,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10
   }
 })
+

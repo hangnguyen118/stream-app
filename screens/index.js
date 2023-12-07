@@ -8,7 +8,7 @@ import ChatScreen from "./ChatScreen";
 import CameraScreen from "./CameraScreen";
 import UploadVideoScreen from "./UploadVideoScreen";
 import LiveScreen from "./LiveScreen";
-import TestScreen from "./TestScreen";
+import ErrorScreen from "./ErrorScreen";
 
 export{
     HomeScreen,
@@ -21,5 +21,5 @@ export{
     CameraScreen,
     UploadVideoScreen,
     LiveScreen,
-    TestScreen
+    ErrorScreen
 }

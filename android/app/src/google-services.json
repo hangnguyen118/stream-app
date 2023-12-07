@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "934758887382",
+    "project_id": "stream-project-4fba2",
+    "storage_bucket": "stream-project-4fba2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:934758887382:android:c613af8c9d51cbe1fa7e77",
+        "android_client_info": {
+          "package_name": "com.appstream"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAd7e65VE7Ni1-lCpYQyysrZ4bzh3ls-E0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

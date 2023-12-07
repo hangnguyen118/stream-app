@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../AuthContext';
 import { facebookIcon, googleIcon } from '../assets';
 import { RootStackScreenProps } from '../navigation/types';
-import config from '../apiconfig';
+import config from '../apiconfig'
 
 const LoginScreen = ({ navigation, route }: RootStackScreenProps<'Login'>) => {
     const { dispatch } = useAuth();
@@ -51,7 +51,6 @@ const LoginScreen = ({ navigation, route }: RootStackScreenProps<'Login'>) => {
         <SquareButton title=" Login with Facebook " color="#F2F3F5" textColor="black" iconRight={<Image source={googleIcon} style={styles.icon}/>} borderWidth={1} />
         <View style={{marginTop: 56}}></View>
         <TouchableOpacity style={styles.linkButton} onPress={()=> navigation.navigate('Register')}><Text style={styles.link}>Don't have an account? Register now</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.linkButton} onPress={()=> navigation.navigate('Live')}><Text style={styles.link}>start live</Text></TouchableOpacity>
       </ScrollView>
     )
   }
